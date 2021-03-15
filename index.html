@@ -27,33 +27,33 @@
 
         "using strict";
 
-        class Mesh extends THREE.Mesh {
-            constructor() {
-                super();
-            }
-            setWireframe(value) {
-                this.material.wireframe = value;
-            }
+        let rendered, scene, camera, cameraControl, stats, mesh;
+        let objects = [];
+        let nModels = 0, positions = [0, 20, -20, 40, -40, 60, -60, 80, -80, 100];
+
+        function randomNumber() {
+            return positions[nModels];
         }
 
-        class Quad extends Mesh {
-            constructor() {
-                super();
-                // QUAD
-                let vertices = [-0.5, 0.5, 0,
-                -0.5, -0.5, 0,
-                    0.5, -0.5, 0,
-                    0.5, 0.5, 0];
-                let indices = [0, 1, 2, 0, 2, 3];
+        function createQuad() {
+            let vertices = [-0.5, 0.5, 0,
+            -0.5, -0.5, 0,
+                0.5, -0.5, 0,
+                0.5, 0.5, 0];
+            let indices = [0, 1, 2, 0, 2, 3];
 
-                this.geometry = new THREE.BufferGeometry();
-                this.geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-                this.geometry.setIndex(indices);
-                this.material = new THREE.MeshBasicMaterial({ color: "white", wireframe: false, side: THREE.DoubleSide });
-            }
+            let geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            geometry.setIndex(indices);
+            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: false, side: THREE.DoubleSide });
+            let mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = randomNumber();
+            mesh.position.y = 1;
+
+            return mesh;
         }
 
-        function addHeart() {
+        function createHeart() {
             let heartShape = new THREE.Shape();
 
             const x = 0, y = 0;
@@ -67,15 +67,15 @@
             heartShape.bezierCurveTo(x + 7, y, x + 5, y + 5, x + 5, y + 5);
 
             let geometry = new THREE.ShapeGeometry(heartShape);
-            // material = new THREE.MeshPhongMaterial( { color: "white", wireframe: true } );
             let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
             let mesh = new THREE.Mesh(geometry, material);
             mesh.position.x = randomNumber();
+            mesh.position.y = 1;
 
             return mesh;
         }
 
-        function addFish() {
+        function createFish() {
             let fishShape = new THREE.Shape();
 
             const x = 0, y = 0;
@@ -92,11 +92,12 @@
             let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
             let mesh = new THREE.Mesh(geometry, material);
             mesh.position.x = randomNumber();
+            mesh.position.y = 1;
 
             return mesh;
         }
 
-        function addDonut() {
+        function createDonut() {
             let donutShape = new THREE.Shape();
 
             const x = 0, y = 0;
@@ -115,61 +116,10 @@
             let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
             let mesh = new THREE.Mesh(geometry, material);
             mesh.position.x = randomNumber();
-
-            return mesh;
-
-        }
-
-
-        let rendered, scene, camera, cameraControl, stats;
-        let mesh;
-        let objects = [];
-        let nModels = 0, positions = [0, 20, -20, 40, -40, 60, -60, 80, -80, 100];
-
-        function randomNumber() {
-            return positions[nModels];
-        }
-
-        function createObject(objectType) {
-            let geometry, material, mesh;
-
-            switch (objectType) {
-                case "pyramid":
-                    geometry = new THREE.CylinderGeometry(0, 1, 1, 4, 1);
-                    material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
-                    mesh = new THREE.Mesh(geometry, material);
-                    mesh.position.x = randomNumber();
-                    break;
-                case "cube":
-                    geometry = new THREE.BoxGeometry();
-                    material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
-                    mesh = new THREE.Mesh(geometry, material);
-                    mesh.position.x = randomNumber();
-                    break;
-                case "sphere":
-                    geometry = new THREE.SphereGeometry();
-                    material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
-                    mesh = new THREE.Mesh(geometry, material);
-                    mesh.position.x = randomNumber();
-                    break;
-                case "quad":
-                    mesh = new Quad();
-                    break;
-                case "heart":
-                    mesh = addHeart();
-                    break;
-                case "fish":
-                    mesh = addFish();
-                    break;
-                case "donut":
-                    mesh = addDonut();
-                    break;
-            }
-
-            nModels = nModels + 1;
-
             mesh.position.y = 1;
+
             return mesh;
+
         }
 
         function init() {
@@ -205,66 +155,50 @@
             // GUI 
             let gui = new dat.GUI()
 
+            // MODELS
+            let sceneModel = {
+                colorPalette: [255, 255, 255],
+                showStats: true
+            }
+
             let showModels = {
-                addPyramid: function () {
-                    if (nModels < 10) {
-                        mesh = createObject("pyramid")
-                        scene.add(mesh);
-                        objects.push(mesh);
-                    } else {
-                        alert("Oops! Máximo se pueden 10 figuras geometricas");
-                    }
-                },
-                addCube: function () {
-                    if (nModels < 10) {
-                        mesh = createObject("cube")
-                        scene.add(mesh);
-                        objects.push(mesh);
-                    } else {
-                        alert("Oops! Máximo se pueden 10 figuras geometricas");
-                    }
-                },
-                addSphere: function () {
-                    if (nModels < 10) {
-                        mesh = createObject("sphere")
-                        scene.add(mesh);
-                        objects.push(mesh);
-                    } else {
-                        alert("Oops! Máximo se pueden 10 figuras geometricas");
-                    }
-                },
                 addQuad: function () {
                     if (nModels < 10) {
-                        mesh = createObject("quad")
+                        mesh = createQuad();
+                        mesh.position.x = randomNumber();
                         scene.add(mesh);
                         objects.push(mesh);
+                        nModels = nModels + 1;
                     } else {
                         alert("Oops! Máximo se pueden 10 figuras geometricas");
                     }
                 },
                 addHeart: function () {
                     if (nModels < 10) {
-                        mesh = createObject("heart")
+                        mesh = createHeart()
                         scene.add(mesh);
                         objects.push(mesh);
+                        nModels = nModels + 1;
                     } else {
                         alert("Oops! Máximo se pueden 10 figuras geometricas");
                     }
                 },
                 addFish: function () {
                     if (nModels < 10) {
-                        mesh = createObject("fish")
+                        mesh = createFish();
                         scene.add(mesh);
                         objects.push(mesh);
+                        nModels = nModels + 1;
                     } else {
                         alert("Oops! Máximo se pueden 10 figuras geometricas");
                     }
                 },
                 addDonut: function () {
                     if (nModels < 10) {
-                        mesh = createObject("donut")
+                        mesh = createDonut();
                         scene.add(mesh);
                         objects.push(mesh);
+                        nModels = nModels + 1;
                     } else {
                         alert("Oops! Máximo se pueden 10 figuras geometricas");
                     }
@@ -272,37 +206,7 @@
 
             }
 
-            // RAYCASTER
-            document.addEventListener('mousedown', onDocumentMouseDown);
-            //let mesh;
-
-            function onDocumentMouseDown(event) {
-                event.preventDefault();
-                var mouse3D = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1,
-                    -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-                var raycaster = new THREE.Raycaster();
-                raycaster.setFromCamera(mouse3D, camera);
-                var intersects = raycaster.intersectObjects(objects);
-                // console.log(intersects)
-                if (intersects.length > 0) {
-                    //let color = Math.random() * 0xffffff;
-                    //intersects[0].object.material.color.setHex(color);
-                    mesh = intersects[0].object;
-
-                    model.name = mesh.name;
-                    model.colorPalette = [mesh.material.color.r * 255, mesh.material.color.g * 255, mesh.material.color.b * 255];
-                    model.posX = mesh.position.x;
-                    model.posY = mesh.position.y;
-                    model.posZ = mesh.position.z;
-                    model.rotX = mesh.rotation.x / Math.PI * 180;
-                    model.rotY = mesh.rotation.y / Math.PI * 180;
-                    model.rotZ = mesh.rotation.z / Math.PI * 180;
-                    model.wireframe = mesh.material.wireframe;
-                }
-            }
-
-            // MODEL
-            let model = {
+            let modelProps = {
                 name: "name",
                 posX: 0,
                 posY: 0,
@@ -314,94 +218,106 @@
                 colorPalette: [255, 255, 255]
             }
 
-            let pageDesign = {
-                colorPalette: [255, 255, 255],
-                showStats: true
+            // RAYCASTER
+            document.addEventListener('mousedown', onDocumentMouseDown);
+
+            function onDocumentMouseDown(event) {
+                event.preventDefault();
+                var mouse3D = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1,
+                    -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
+                var raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(mouse3D, camera);
+                var intersects = raycaster.intersectObjects(objects);
+
+                if (intersects.length > 0) {
+                    mesh = intersects[0].object;
+
+                    Props.name = mesh.name;
+                    modelProps.colorPalette = [mesh.material.color.r * 255, mesh.material.color.g * 255, mesh.material.color.b * 255];
+                    modelProps.posX = mesh.position.x;
+                    modelProps.posY = mesh.position.y;
+                    modelProps.posZ = mesh.position.z;
+                    modelProps.rotX = mesh.rotation.x / Math.PI * 180;
+                    modelProps.rotY = mesh.rotation.y / Math.PI * 180;
+                    modelProps.rotZ = mesh.rotation.z / Math.PI * 180;
+                    modelProps.wireframe = mesh.material.wireframe;
+                }
             }
 
             // MENUS
+
+            // SCENE MENU
             let generalMenu = gui.addFolder("Scene appereance");
-            let addModels = gui.addFolder("Add models");
-            addModels.open();
-
-            // add models buttons
-            let btnAddPyramid = addModels.add(showModels, "addPyramid").name("Add Pyramid")
-            let btnAddCube = addModels.add(showModels, "addCube").name("Add Cube")
-            let btnAddSphere = addModels.add(showModels, "addSphere").name("Add Sphere")
-            let btnAddQuad = addModels.add(showModels, "addQuad").name("Add Quad")
-            let btnAddHeart = addModels.add(showModels, "addHeart").name("Add Heart")
-            let btnAddFish = addModels.add(showModels, "addFish").name("Add Fish")
-            let btnAddDonut = addModels.add(showModels, "addDonut").name("Add Donut")
-
-            // Position Menu
-            let posMenu = gui.addFolder("Position Menu");
-            posMenu.open();
-
-            // Model Position
-            let sliderPosX = posMenu.add(model, "posX").min(-100).max(+100).step(0.5).name("X").listen().onChange(function (value) {
-                mesh.position.x = value;
-            })
-
-            let sliderPosY = posMenu.add(model, "posY").min(-100).max(+100).step(0.5).name("Y").listen().onChange(function (value) {
-                mesh.position.y = value;
-            })
-
-            let sliderPosZ = posMenu.add(model, "posZ").min(-100).max(+100).step(0.5).name("Z").listen().onChange(function (value) {
-                mesh.position.z = value;
-            })
-
-            // Rotation Menu
-            let rotMenu = gui.addFolder("Rotation Menu");
-            rotMenu.open();
-
-            // Model rotation
-            let sliderRotY = rotMenu.add(model, "rotY").min(-360).max(+360).step(10).name("Rotation Y (deg)").listen().onChange(function (value) {
-                mesh.rotation.y = value * Math.PI / 180
-            });
-
-            let sliderRotX = rotMenu.add(model, "rotX").min(-360).max(+360).step(10).name("Rotation X (deg)").listen().onChange(function (value) {
-                mesh.rotation.x = value * Math.PI / 180
-            });
-
-            let sliderRotZ = rotMenu.add(model, "rotZ").min(-360).max(+360).step(10).name("Rotation Z (deg)").listen().onChange(function (value) {
-                mesh.rotation.z = value * Math.PI / 180
-            });
-
-            // Apperance Menu
-            let appearMenu = gui.addFolder("Appearance Menu");
-            appearMenu.open();
-
-            let colorPalette = appearMenu.addColor(model, "colorPalette").name("Color Palette").listen().onChange(function (color) {
-                mesh.material.color = new THREE.Color(color[0] / 256, color[1] / 256, color[2] / 256);
-            });
-
-            let chbWireframe = appearMenu.add(model, "wireframe").setValue(true).name("Wireframe").onChange(function (value) {
-                mesh.material.wireframe = value;
-            });
-
-
-            /* let tfMeshName = appearMenu.add(model, "name").name("Model's Name").onChange(function (value) {
-                console.log(mesh.name);
-                mesh.name = value;
-            }); */
-
 
             // show plane checkbox
             let chbPlaneHelper = generalMenu.add(planeHelper, "visible").setValue(false).name("Show PlaneHelper");
-
             // show stats checkbox
-            let chbStats = generalMenu.add(pageDesign, "showStats").setValue(true).name("Show Stats").onChange(function (value) {
+            let chbStats = generalMenu.add(sceneModel, "showStats").setValue(true).name("Show Stats").onChange(function (value) {
                 if (value) {
                     stats.showPanel(0);
                 } else {
                     stats.showPanel(-1);
                 }
             });
-
             // change background color
-            let clrPalette = generalMenu.addColor(pageDesign, "colorPalette").name("Color Background").onChange(function (color) {
+            let clrPalette = generalMenu.addColor(sceneModel, "colorPalette").name("Color Background").onChange(function (color) {
                 rendered.setClearColor(new THREE.Color(color[0] / 256, color[1] / 256, color[2] / 256))
             });
+
+            // ADD MENU
+            let addModels = gui.addFolder("Add models");
+            addModels.open();
+
+            // add models buttons
+            let btnAddPyramid = addModels.add(showModels, "addPyramid").name("Add Pyramid")
+            let btnAddQuad = addModels.add(showModels, "addQuad").name("Add Quad")
+            let btnAddHeart = addModels.add(showModels, "addHeart").name("Add Heart")
+            let btnAddFish = addModels.add(showModels, "addFish").name("Add Fish")
+            let btnAddDonut = addModels.add(showModels, "addDonut").name("Add Donut")
+
+            // POSITION MENU
+            let posMenu = gui.addFolder("Position");
+
+            // positions sliders
+            let sliderPosX = posMenu.add(modelProps, "posX").min(-100).max(+100).step(0.5).name("X").listen().onChange(function (value) {
+                mesh.position.x = value;
+            })
+            let sliderPosY = posMenu.add(modelProps, "posY").min(-100).max(+100).step(0.5).name("Y").listen().onChange(function (value) {
+                mesh.position.y = value;
+            })
+            let sliderPosZ = posMenu.add(modelProps, "posZ").min(-100).max(+100).step(0.5).name("Z").listen().onChange(function (value) {
+                mesh.position.z = value;
+            })
+
+            // ROTATION MENU
+            let rotMenu = gui.addFolder("Rotation");
+
+            // rotation sliders
+            let sliderRotY = rotMenu.add(modelProps, "rotY").min(-360).max(+360).step(10).name("Rotation Y (deg)").listen().onChange(function (value) {
+                mesh.rotation.y = value * Math.PI / 180
+            });
+            let sliderRotX = rotMenu.add(modelProps, "rotX").min(-360).max(+360).step(10).name("Rotation X (deg)").listen().onChange(function (value) {
+                mesh.rotation.x = value * Math.PI / 180
+            });
+            let sliderRotZ = rotMenu.add(modelProps, "rotZ").min(-360).max(+360).step(10).name("Rotation Z (deg)").listen().onChange(function (value) {
+                mesh.rotation.z = value * Math.PI / 180
+            });
+
+            // APPEREANCE MENU
+            let appearMenu = gui.addFolder("Appearance");
+
+            // change background color
+            let colorPalette = appearMenu.addColor(modelProps, "colorPalette").name("Color Palette").listen().onChange(function (color) {
+                mesh.material.color = new THREE.Color(color[0] / 256, color[1] / 256, color[2] / 256);
+            });
+            // wireframe checkbox
+            let chbWireframe = appearMenu.add(modelProps, "wireframe").setValue(true).name("Wireframe").onChange(function (value) {
+                mesh.material.wireframe = value;
+            });
+            /* let tfMeshName = appearMenu.add(modelProps, "name").name("Model's Name").onChange(function (value) {
+                console.log(mesh.name);
+                mesh.name = value;
+            }); */
 
             gui.close();
 
