@@ -45,12 +45,13 @@
             let geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
             geometry.setIndex(indices);
-            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: false, side: THREE.DoubleSide });
-            let mesh = new THREE.Mesh(geometry, material);
-            mesh.position.x = randomNumber();
-            mesh.position.y = 1;
-
-            return mesh;
+            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: false, side: THREE.DoubleSide, transparent: true });
+            let quad = new THREE.Mesh(geometry, material);
+            quad.position.x = randomNumber();
+            quad.position.y = 1;
+            quad.name = "Quad";
+            console.log(quad);
+            return quad;
         }
 
         function createHeart() {
@@ -68,11 +69,12 @@
 
             let geometry = new THREE.ShapeGeometry(heartShape);
             let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
-            let mesh = new THREE.Mesh(geometry, material);
-            mesh.position.x = randomNumber();
-            mesh.position.y = 1;
+            let heart = new THREE.Mesh(geometry, material);
+            heart.position.x = randomNumber();
+            heart.position.y = 1;
+            heart.name = "Heart";
 
-            return mesh;
+            return heart;
         }
 
         function createFish() {
@@ -90,11 +92,12 @@
             let geometry = new THREE.ShapeGeometry(fishShape);
 
             let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
-            let mesh = new THREE.Mesh(geometry, material);
-            mesh.position.x = randomNumber();
-            mesh.position.y = 1;
+            let fish = new THREE.Mesh(geometry, material);
+            fish.position.x = randomNumber();
+            fish.position.y = 1;
+            fish.name = "Fish";
 
-            return mesh;
+            return fish;
         }
 
         function createDonut() {
@@ -114,11 +117,12 @@
             let geometry = new THREE.ShapeGeometry(donutShape);
 
             let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
-            let mesh = new THREE.Mesh(geometry, material);
-            mesh.position.x = randomNumber();
-            mesh.position.y = 1;
+            let donut = new THREE.Mesh(geometry, material);
+            donut.position.x = randomNumber();
+            donut.position.y = 1;
+            donut.name = "Donut";
 
-            return mesh;
+            return donut;
 
         }
 
@@ -156,6 +160,7 @@
             let gui = new dat.GUI()
 
             // MODELS
+
             let sceneModel = {
                 colorPalette: [255, 255, 255],
                 showStats: true
@@ -165,7 +170,6 @@
                 addQuad: function () {
                     if (nModels < 10) {
                         mesh = createQuad();
-                        mesh.position.x = randomNumber();
                         scene.add(mesh);
                         objects.push(mesh);
                         nModels = nModels + 1;
@@ -207,13 +211,13 @@
             }
 
             let modelProps = {
-                name: "name",
                 posX: 0,
                 posY: 0,
                 posZ: 0,
                 rotX: 0,
                 rotY: 0,
                 rotZ: 0,
+                opacity: 1,
                 wireframe: true,
                 colorPalette: [255, 255, 255]
             }
@@ -232,8 +236,7 @@
                 if (intersects.length > 0) {
                     mesh = intersects[0].object;
 
-                    Props.name = mesh.name;
-                    modelProps.colorPalette = [mesh.material.color.r * 255, mesh.material.color.g * 255, mesh.material.color.b * 255];
+                    modelProps.name = mesh.name;
                     modelProps.posX = mesh.position.x;
                     modelProps.posY = mesh.position.y;
                     modelProps.posZ = mesh.position.z;
@@ -241,6 +244,7 @@
                     modelProps.rotY = mesh.rotation.y / Math.PI * 180;
                     modelProps.rotZ = mesh.rotation.z / Math.PI * 180;
                     modelProps.wireframe = mesh.material.wireframe;
+                    modelProps.colorPalette = [mesh.material.color.r * 255, mesh.material.color.g * 255, mesh.material.color.b * 255];
                 }
             }
 
@@ -260,7 +264,7 @@
                 }
             });
             // change background color
-            let clrPalette = generalMenu.addColor(sceneModel, "colorPalette").name("Color Background").onChange(function (color) {
+            let sceneColor = generalMenu.addColor(sceneModel, "colorPalette").name("Color Background").onChange(function (color) {
                 rendered.setClearColor(new THREE.Color(color[0] / 256, color[1] / 256, color[2] / 256))
             });
 
@@ -269,14 +273,16 @@
             addModels.open();
 
             // add models buttons
-            let btnAddPyramid = addModels.add(showModels, "addPyramid").name("Add Pyramid")
             let btnAddQuad = addModels.add(showModels, "addQuad").name("Add Quad")
             let btnAddHeart = addModels.add(showModels, "addHeart").name("Add Heart")
             let btnAddFish = addModels.add(showModels, "addFish").name("Add Fish")
             let btnAddDonut = addModels.add(showModels, "addDonut").name("Add Donut")
 
+            //MODELS MENU
+            let modelsMenu = gui.addFolder("Model")
+
             // POSITION MENU
-            let posMenu = gui.addFolder("Position");
+            let posMenu = modelsMenu.addFolder("Position");
 
             // positions sliders
             let sliderPosX = posMenu.add(modelProps, "posX").min(-100).max(+100).step(0.5).name("X").listen().onChange(function (value) {
@@ -290,34 +296,33 @@
             })
 
             // ROTATION MENU
-            let rotMenu = gui.addFolder("Rotation");
+            let rotMenu = modelsMenu.addFolder("Rotation");
 
             // rotation sliders
-            let sliderRotY = rotMenu.add(modelProps, "rotY").min(-360).max(+360).step(10).name("Rotation Y (deg)").listen().onChange(function (value) {
-                mesh.rotation.y = value * Math.PI / 180
-            });
-            let sliderRotX = rotMenu.add(modelProps, "rotX").min(-360).max(+360).step(10).name("Rotation X (deg)").listen().onChange(function (value) {
+            let sliderRotX = rotMenu.add(modelProps, "rotX").min(-360).max(+360).step(10).name("X").listen().onChange(function (value) {
                 mesh.rotation.x = value * Math.PI / 180
             });
-            let sliderRotZ = rotMenu.add(modelProps, "rotZ").min(-360).max(+360).step(10).name("Rotation Z (deg)").listen().onChange(function (value) {
+            let sliderRotY = rotMenu.add(modelProps, "rotY").min(-360).max(+360).step(10).name("Y").listen().onChange(function (value) {
+                mesh.rotation.y = value * Math.PI / 180
+            });
+            let sliderRotZ = rotMenu.add(modelProps, "rotZ").min(-360).max(+360).step(10).name("Z").listen().onChange(function (value) {
                 mesh.rotation.z = value * Math.PI / 180
             });
 
             // APPEREANCE MENU
-            let appearMenu = gui.addFolder("Appearance");
+            let appearMenu = modelsMenu.addFolder("Appearance");
 
             // change background color
-            let colorPalette = appearMenu.addColor(modelProps, "colorPalette").name("Color Palette").listen().onChange(function (color) {
+            let modelColor = appearMenu.addColor(modelProps, "colorPalette").name("Color").listen().onChange(function (color) {
                 mesh.material.color = new THREE.Color(color[0] / 256, color[1] / 256, color[2] / 256);
             });
             // wireframe checkbox
             let chbWireframe = appearMenu.add(modelProps, "wireframe").setValue(true).name("Wireframe").onChange(function (value) {
                 mesh.material.wireframe = value;
             });
-            /* let tfMeshName = appearMenu.add(modelProps, "name").name("Model's Name").onChange(function (value) {
-                console.log(mesh.name);
-                mesh.name = value;
-            }); */
+            let opacity = appearMenu.add(modelProps, "opacity").min(0).max(1).step(0.1).name("Opacity").onChange(function (value) {
+                mesh.opacity = value;
+            })
 
             gui.close();
 
