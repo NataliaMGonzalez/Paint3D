@@ -36,27 +36,36 @@
         }
 
         function createQuad() {
-            let vertices = [-0.5, 0.5, 0,
-            -0.5, -0.5, 0,
-                0.5, -0.5, 0,
-                0.5, 0.5, 0];
+
+            // set vectors of object
+            let vertices = [-0.5, 0.5, 0, -0.5, -0.5, 0, 0.5, -0.5, 0, 0.5, 0.5, 0];
             let indices = [0, 1, 2, 0, 2, 3];
 
+            // set geometry of the object
             let geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
             geometry.setIndex(indices);
-            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: false, side: THREE.DoubleSide, transparent: true });
+
+            // set material of the object
+            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, side: THREE.DoubleSide, transparent: true });
+
+            // object creation
             let quad = new THREE.Mesh(geometry, material);
             quad.position.x = randomNumber();
             quad.position.y = 1;
             quad.name = "Quad";
-            console.log(quad);
+
+            // added to scene
+            scene.add(quad);
+            objects.push(quad);
+
             return quad;
         }
 
         function createHeart() {
             let heartShape = new THREE.Shape();
 
+            // set vectors of object
             const x = 0, y = 0;
             heartShape.moveTo(x, y);
             heartShape.moveTo(x + 5, y + 5);
@@ -67,12 +76,21 @@
             heartShape.bezierCurveTo(x + 16, y + 7, x + 16, y, x + 10, y);
             heartShape.bezierCurveTo(x + 7, y, x + 5, y + 5, x + 5, y + 5);
 
+            // set geometry of the object
             let geometry = new THREE.ShapeGeometry(heartShape);
-            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
+
+            // set material of the object
+            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true });
+
+            // object creation
             let heart = new THREE.Mesh(geometry, material);
             heart.position.x = randomNumber();
             heart.position.y = 1;
             heart.name = "Heart";
+
+            // added to scene
+            scene.add(heart);
+            objects.push(heart);
 
             return heart;
         }
@@ -80,22 +98,30 @@
         function createFish() {
             let fishShape = new THREE.Shape();
 
+            // set vectors of object
             const x = 0, y = 0;
-
             fishShape.moveTo(x, y);
-            fishShape.quadraticCurveTo(x + 50, y - 80, x + 90, y - 10);
-            fishShape.quadraticCurveTo(x + 100, y - 10, x + 115, y - 40);
-            fishShape.quadraticCurveTo(x + 115, y, x + 115, y + 40);
-            fishShape.quadraticCurveTo(x + 100, y + 10, x + 90, y + 10);
-            fishShape.quadraticCurveTo(x + 50, y + 80, x, y);
+            fishShape.quadraticCurveTo(x + 40, y - 70, x + 80, y - 10);
+            fishShape.quadraticCurveTo(x + 90, y - 10, x + 105, y - 30);
+            fishShape.quadraticCurveTo(x + 105, y, x + 105, y + 30);
+            fishShape.quadraticCurveTo(x + 90, y + 10, x + 80, y + 10);
+            fishShape.quadraticCurveTo(x + 40, y + 70, x, y);
 
+            // set geometry of the object
             let geometry = new THREE.ShapeGeometry(fishShape);
 
-            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
+            // set material of the object
+            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true });
+
+            // object creation
             let fish = new THREE.Mesh(geometry, material);
             fish.position.x = randomNumber();
             fish.position.y = 1;
             fish.name = "Fish";
+
+            // added to scene
+            scene.add(fish);
+            objects.push(fish);
 
             return fish;
         }
@@ -103,27 +129,69 @@
         function createDonut() {
             let donutShape = new THREE.Shape();
 
+            // set vectors of object
             const x = 0, y = 0;
-
-            donutShape.moveTo(50, 10);
-            donutShape.absarc(10, 10, 40, 0, Math.PI * 2, false);
-
+            donutShape.moveTo(30, 5);
+            donutShape.absarc(5, 5, 10, 0, Math.PI * 2, false);
             let holePath = new THREE.Path();
-            holePath.moveTo(20, 10);
-            holePath.absarc(10, 10, 10, 0, Math.PI * 2, true);
-
+            holePath.moveTo(5, 5);
+            holePath.absarc(5, 5, 5, 0, Math.PI * 2, true);
             donutShape.holes.push(holePath);
 
+            // set geometry of the object
             let geometry = new THREE.ShapeGeometry(donutShape);
 
-            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true });
+            // set material of the object
+            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true });
+
+            // object creation
             let donut = new THREE.Mesh(geometry, material);
             donut.position.x = randomNumber();
             donut.position.y = 1;
             donut.name = "Donut";
 
+            // added to scene
+            scene.add(donut);
+            objects.push(donut);
+
             return donut;
 
+        }
+
+        function createDiamond() {
+
+            // set vectors of object
+            let points = [
+                new THREE.Vector3(0.5, 1.5, 0.5),
+                new THREE.Vector3(0, 0, 0),
+                new THREE.Vector3(0, 0, 1),
+                new THREE.Vector3(1, 0, 1),
+                new THREE.Vector3(1, 0, 0),
+                new THREE.Vector3(0.5, -1.5, 0.5)
+            ];
+
+            // set geometry of the object
+            let geometry = new THREE.BufferGeometry().setFromPoints(points);
+            geometry.setIndex([
+                0, 1, 2, 0, 2, 3, 0, 3, 4, 0, 4, 1, 1, 3, 2,
+                1, 4, 3, 5, 1, 2, 5, 2, 3, 5, 3, 4, 5, 4, 1,
+            ]);
+            geometry.computeVertexNormals();
+
+            // set material of the object
+            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true });
+
+            // object creation
+            let diamond = new THREE.Mesh(geometry, material);
+            diamond.position.x = randomNumber();
+            diamond.position.y = 1;
+            diamond.name = "Diamond";
+
+            // added to scene
+            scene.add(diamond);
+            objects.push(diamond);
+
+            return diamond;
         }
 
         function init() {
@@ -160,7 +228,6 @@
             let gui = new dat.GUI()
 
             // MODELS
-
             let sceneModel = {
                 colorPalette: [255, 255, 255],
                 showStats: true
@@ -170,8 +237,6 @@
                 addQuad: function () {
                     if (nModels < 10) {
                         mesh = createQuad();
-                        scene.add(mesh);
-                        objects.push(mesh);
                         nModels = nModels + 1;
                     } else {
                         alert("Oops! Máximo se pueden 10 figuras geometricas");
@@ -180,8 +245,6 @@
                 addHeart: function () {
                     if (nModels < 10) {
                         mesh = createHeart()
-                        scene.add(mesh);
-                        objects.push(mesh);
                         nModels = nModels + 1;
                     } else {
                         alert("Oops! Máximo se pueden 10 figuras geometricas");
@@ -190,8 +253,6 @@
                 addFish: function () {
                     if (nModels < 10) {
                         mesh = createFish();
-                        scene.add(mesh);
-                        objects.push(mesh);
                         nModels = nModels + 1;
                     } else {
                         alert("Oops! Máximo se pueden 10 figuras geometricas");
@@ -200,14 +261,19 @@
                 addDonut: function () {
                     if (nModels < 10) {
                         mesh = createDonut();
-                        scene.add(mesh);
-                        objects.push(mesh);
                         nModels = nModels + 1;
                     } else {
                         alert("Oops! Máximo se pueden 10 figuras geometricas");
                     }
                 },
-
+                addDiamond: function () {
+                    if (nModels < 10) {
+                        mesh = createDiamond();
+                        nModels = nModels + 1;
+                    } else {
+                        alert("Oops! Máximo se pueden 10 figuras geometricas");
+                    }
+                },
             }
 
             let modelProps = {
@@ -245,6 +311,7 @@
                     modelProps.rotZ = mesh.rotation.z / Math.PI * 180;
                     modelProps.wireframe = mesh.material.wireframe;
                     modelProps.colorPalette = [mesh.material.color.r * 255, mesh.material.color.g * 255, mesh.material.color.b * 255];
+                    modelProps.opacity = mesh.material.opacity;
                 }
             }
 
@@ -253,7 +320,7 @@
             // SCENE MENU
             let generalMenu = gui.addFolder("Scene appereance");
 
-            // show plane checkbox
+            // show plane helper checkbox
             let chbPlaneHelper = generalMenu.add(planeHelper, "visible").setValue(false).name("Show PlaneHelper");
             // show stats checkbox
             let chbStats = generalMenu.add(sceneModel, "showStats").setValue(true).name("Show Stats").onChange(function (value) {
@@ -277,6 +344,7 @@
             let btnAddHeart = addModels.add(showModels, "addHeart").name("Add Heart")
             let btnAddFish = addModels.add(showModels, "addFish").name("Add Fish")
             let btnAddDonut = addModels.add(showModels, "addDonut").name("Add Donut")
+            let btnAddDiamond = addModels.add(showModels, "addDiamond").name("Add Diamond")
 
             //MODELS MENU
             let modelsMenu = gui.addFolder("Model")
@@ -317,11 +385,12 @@
                 mesh.material.color = new THREE.Color(color[0] / 256, color[1] / 256, color[2] / 256);
             });
             // wireframe checkbox
-            let chbWireframe = appearMenu.add(modelProps, "wireframe").setValue(true).name("Wireframe").onChange(function (value) {
+            let chbWireframe = appearMenu.add(modelProps, "wireframe").setValue(true).name("Wireframe").listen().onChange(function (value) {
                 mesh.material.wireframe = value;
             });
-            let opacity = appearMenu.add(modelProps, "opacity").min(0).max(1).step(0.1).name("Opacity").onChange(function (value) {
-                mesh.opacity = value;
+            // opacity slider
+            let sliderOpacity = appearMenu.add(modelProps, "opacity").min(0).max(1).step(0.01).name("Opacity").listen().onChange(function (value) {
+                mesh.material.opacity = value;
             })
 
             gui.close();
