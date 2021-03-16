@@ -1,3 +1,8 @@
+<!--
+    Melba Consuelos - A01410921
+    Natalia González - A01382007
+    Paola Villarreal - A00821971
+-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -67,7 +72,7 @@
             let rhomboid = new THREE.Mesh(geometry, material);
             rhomboid.position.x = randomNumber();
             rhomboid.position.y = 1;
-            rhomboid.scale.set( 2, 2, 2 );
+            rhomboid.scale.set(2, 2, 2);
             rhomboid.name = "Rhomboid";
 
             // added to scene
@@ -96,7 +101,7 @@
             let heart = new THREE.Mesh(geometry, material);
             heart.position.x = randomNumber();
             heart.position.y = 1;
-            heart.scale.set( 0.15, 0.15, 0.15 );
+            heart.scale.set(0.15, 0.15, 0.15);
             heart.name = "Heart";
 
             // added to scene
@@ -127,7 +132,7 @@
             let fish = new THREE.Mesh(geometry, material);
             fish.position.x = randomNumber();
             fish.position.y = 1;
-            fish.scale.set( 0.05, 0.05, 0.05 );
+            fish.scale.set(0.05, 0.05, 0.05);
             fish.name = "Fish";
 
             // added to scene
@@ -158,7 +163,7 @@
             let donut = new THREE.Mesh(geometry, material);
             donut.position.x = randomNumber();
             donut.position.y = 1;
-            donut.scale.set( 0.15, 0.15, 0.15 );
+            donut.scale.set(0.15, 0.15, 0.15);
             donut.name = "Donut";
 
             // added to scene
@@ -196,7 +201,7 @@
             let diamond = new THREE.Mesh(geometry, material);
             diamond.position.x = randomNumber();
             diamond.position.y = 1;
-            diamond.scale.set( 1.5, 1.5, 1.5 );
+            diamond.scale.set(1.5, 1.5, 1.5);
             diamond.name = "Diamond";
 
             // added to scene
@@ -225,7 +230,7 @@
             let triangle = new THREE.Mesh(geometry, material);
             triangle.position.x = randomNumber();
             triangle.position.y = 1;
-            triangle.scale.set( 0.05, 0.05, 0.05 );
+            triangle.scale.set(0.05, 0.05, 0.05);
             triangle.name = "Triangle";
 
             // added to scene
@@ -271,7 +276,7 @@
             let smile = new THREE.Mesh(geometry, material);
             smile.position.x = randomNumber();
             smile.position.y = 1;
-            smile.scale.set( 0.05, 0.05, 0.05 );
+            smile.scale.set(0.05, 0.05, 0.05);
             smile.name = "Smile";
 
             // added to scene
@@ -313,7 +318,7 @@
             let dice = new THREE.Mesh(geometry, material);
             dice.position.x = randomNumber();
             dice.position.y = 1;
-            dice.scale.set( 2, 2, 2 );
+            dice.scale.set(2, 2, 2);
             dice.name = "Dice";
 
             // added to scene
@@ -355,7 +360,7 @@
             let trapeze = new THREE.Mesh(geometry, material);
             trapeze.position.x = randomNumber();
             trapeze.position.y = 1;
-            trapeze.scale.set( 1, 1, 1 );
+            trapeze.scale.set(1, 1, 1);
             trapeze.name = "Trapeze";
 
             // added to scene
@@ -367,11 +372,11 @@
 
         function createRoundRect() {
             let roundRectShape = new THREE.Shape();
-			roundRectShape.moveTo( 40, 40 );
-			roundRectShape.lineTo( 40, 160 );
-			roundRectShape.absarc( 60, 160, 20, Math.PI, 0, true );
-		    roundRectShape.lineTo( 80, 40 );
-			roundRectShape.absarc( 60, 40, 20, 2 * Math.PI, Math.PI, true );
+            roundRectShape.moveTo(40, 40);
+            roundRectShape.lineTo(40, 160);
+            roundRectShape.absarc(60, 160, 20, Math.PI, 0, true);
+            roundRectShape.lineTo(80, 40);
+            roundRectShape.absarc(60, 40, 20, 2 * Math.PI, Math.PI, true);
 
             // set geometry of the object
             let geometry = new THREE.ExtrudeGeometry(roundRectShape, extrudeSettings);
@@ -383,7 +388,7 @@
             let roundRect = new THREE.Mesh(geometry, material);
             roundRect.position.x = randomNumber();
             roundRect.position.y = 1;
-            roundRect.scale.set( 0.05, 0.05, 0.05 );
+            roundRect.scale.set(0.05, 0.05, 0.05);
             roundRect.name = "roundRect";
 
             // added to scene
@@ -416,7 +421,7 @@
             let normal = new THREE.Vector3(0, 1, 0);
             let distanceToPlane = 0.;
             let plane = new THREE.Plane(normal, distanceToPlane);
-            let planeHelper = new THREE.PlaneHelper(plane, 30, "white");
+            let planeHelper = new THREE.PlaneHelper(plane, 50, "white");
             scene.add(planeHelper);
 
             // STATS
