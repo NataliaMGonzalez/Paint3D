@@ -30,6 +30,7 @@
         let rendered, scene, camera, cameraControl, stats, mesh;
         let objects = [];
         let nModels = 0, positions = [0, 20, -20, 40, -40, 60, -60, 80, -80, 100];
+        const extrudeSettings = { depth: 8, bevelEnabled: true, bevelSegments: 2, steps: 2, bevelSize: 1, bevelThickness: 1 };
 
         function randomNumber() {
             return positions[nModels];
@@ -76,13 +77,8 @@
             heartShape.bezierCurveTo(x + 16, y + 7, x + 16, y, x + 10, y);
             heartShape.bezierCurveTo(x + 7, y, x + 5, y + 5, x + 5, y + 5);
 
-            // set geometry of the object
-            let geometry = new THREE.ShapeGeometry(heartShape);
-
-            // set material of the object
+            let geometry = new THREE.ExtrudeGeometry( heartShape, extrudeSettings );
             let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true });
-
-            // object creation
             let heart = new THREE.Mesh(geometry, material);
             heart.position.x = randomNumber();
             heart.position.y = 1;
@@ -107,8 +103,7 @@
             fishShape.quadraticCurveTo(x + 90, y + 10, x + 80, y + 10);
             fishShape.quadraticCurveTo(x + 40, y + 70, x, y);
 
-            // set geometry of the object
-            let geometry = new THREE.ShapeGeometry(fishShape);
+            let geometry = new THREE.ExtrudeGeometry( fishShape, extrudeSettings );
 
             // set material of the object
             let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true });
@@ -138,8 +133,7 @@
             holePath.absarc(5, 5, 5, 0, Math.PI * 2, true);
             donutShape.holes.push(holePath);
 
-            // set geometry of the object
-            let geometry = new THREE.ShapeGeometry(donutShape);
+            let geometry = new THREE.ExtrudeGeometry( donutShape, extrudeSettings );
 
             // set material of the object
             let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true });
@@ -192,6 +186,59 @@
             objects.push(diamond);
 
             return diamond;
+        }
+
+        function createTriangle() {
+            let triangleShape = new THREE.Shape();
+			triangleShape.moveTo( 80, 20 );
+			triangleShape.lineTo( 40, 80 );
+			triangleShape.lineTo( 120, 80 );
+			triangleShape.lineTo( 80, 20 );
+
+            let geometry = new THREE.ExtrudeGeometry( triangleShape, extrudeSettings );
+
+            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true });
+            let triangle = new THREE.Mesh(geometry, material);
+            triangle.position.x = randomNumber();
+            triangle.position.y = 1;
+            triangle.name = "Triangle";
+
+            return triangle;
+        }
+
+        function createSmile() {
+            let smileShape = new THREE.Shape();
+			smileShape.moveTo( 80, 40 );
+			smileShape.absarc( 40, 40, 40, 0, Math.PI * 2, false );
+
+			let smileEye1Path = new THREE.Path();
+			smileEye1Path.moveTo( 35, 20 );
+			smileEye1Path.absellipse( 25, 20, 10, 10, 0, Math.PI * 2, true );
+
+			let smileEye2Path = new THREE.Path();
+			smileEye2Path.moveTo( 65, 20 );
+			smileEye2Path.absarc( 55, 20, 10, 0, Math.PI * 2, true );
+
+			let smileMouthPath = new THREE.Path();
+			smileMouthPath.moveTo( 20, 40 );
+			smileMouthPath.quadraticCurveTo( 40, 60, 60, 40 );
+			smileMouthPath.bezierCurveTo( 70, 45, 70, 50, 60, 60 );
+			smileMouthPath.quadraticCurveTo( 40, 80, 20, 60 );
+			smileMouthPath.quadraticCurveTo( 5, 50, 20, 40 );
+
+			smileShape.holes.push( smileEye1Path );
+			smileShape.holes.push( smileEye2Path );
+			smileShape.holes.push( smileMouthPath );
+
+            let geometry = new THREE.ExtrudeGeometry( smileShape, extrudeSettings );
+
+            let material = new THREE.MeshBasicMaterial({ color: "white", wireframe: true, transparent: true });
+            let smile = new THREE.Mesh(geometry, material);
+            smile.position.x = randomNumber();
+            smile.position.y = 1;
+            smile.name = "Smile";
+
+            return smile;
         }
 
         function init() {
@@ -269,11 +316,29 @@
                 addDiamond: function () {
                     if (nModels < 10) {
                         mesh = createDiamond();
+                    }
+                },
+                addTriangle: function () {
+                    if (nModels < 10) {
+                        mesh = createTriangle();
+                        scene.add(mesh);
+                        objects.push(mesh);
                         nModels = nModels + 1;
                     } else {
                         alert("Oops! Máximo se pueden 10 figuras geometricas");
                     }
                 },
+                addSmile: function () {
+                    if (nModels < 10) {
+                        mesh = createSmile();
+                        scene.add(mesh);
+                        objects.push(mesh);
+                        nModels = nModels + 1;
+                    } else {
+                        alert("Oops! Máximo se pueden 10 figuras geometricas");
+                    }
+                }
+
             }
 
             let modelProps = {
@@ -345,6 +410,8 @@
             let btnAddFish = addModels.add(showModels, "addFish").name("Add Fish")
             let btnAddDonut = addModels.add(showModels, "addDonut").name("Add Donut")
             let btnAddDiamond = addModels.add(showModels, "addDiamond").name("Add Diamond")
+            let btnAddTriangle = addModels.add(showModels, "addTriangle").name("Add Triangle")
+            let btnAddSmile = addModels.add(showModels, "addSmile").name("Add Smile")
 
             //MODELS MENU
             let modelsMenu = gui.addFolder("Model")
